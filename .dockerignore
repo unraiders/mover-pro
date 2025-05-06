@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# Allow only specific files
+!config.py
+!entrypoint.sh
+!mover_pool_a_array.py
+!mover_torrents.py
+!notificaciones.py
+!requirements.txt
+!utils.py
+

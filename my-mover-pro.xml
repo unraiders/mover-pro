@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>mover-pro</Name>
+  <Repository>unraiders/mover-pro</Repository>
+  <Registry>https://hub.docker.com/r/unraiders/mover-pro/</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://hub.docker.com/unraiders/mover-pro</Support>
+  <Icon>https://raw.githubusercontent.com/unraiders/mover-pro/master/imagenes/mover-pro.png</Icon>
+  <Overview>
+    Ejecutar rsync con días de antigüedad, teniendo en cuenta hardlinks y pausar/reanudar los torrents sedeados en qBittorrent con notificación a Telegram o Discord.
+  </Overview>
+  <Category>Tools:</Category>
+  <Config Name="QBITTORRENT_HOST" Target="QBITTORRENT_HOST" Default="" Mode="" Description="Host y puerto de qBittorrent, ejemplo: 192.168.2.20:8090" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="QBITTORRENT_USER" Target="QBITTORRENT_USER" Default="admin" Mode="" Description="Usuario de qBittorrent" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="QBITTORRENT_PASSWORD" Target="QBITTORRENT_PASSWORD" Default="admin" Mode="" Description="Contraseña de qBittorrent" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="ORIGEN" Target="/origen" Default="/mnt/" Mode="rw" Description="Carpeta/Share del pool origen desde donde moverá los ficheros y carpetas." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="DESTINO" Target="DESTINO" Default="" Mode="" Description="Carpeta destino en el array donde moverá los ficheros y carpetas." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="ESPACIO_MINIMO" Target="ESPACIO_MINIMO" Default="100" Mode="" Description="Espacio mínimo en los discos del array a la hora de hacer el rsync en GB" Type="Variable" Display="always" Required="true" Mask="false"/> 
+  <Config Name="DIAS_ANTIGUEDAD" Target="DIAS_ANTIGUEDAD" Default="7" Mode="" Description="Número de días de antigüedad para ejecutar el proceso de movimiento con rsync." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="CRON" Target="CRON" Default="0 7 * * *" Mode="" Description="Hora de ejecutar el script (formato crontab. ej., 0 7 * * * = 7:00 AM, visita https://crontab.guru/ para mas info.)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="CLIENTE_NOTIFICACION" Target="CLIENTE_NOTIFICACION" Default="|telegram|discord" Mode="" Description="Cliente de notificaciones. (telegram o discord)" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="TELEGRAM_BOT_TOKEN" Target="TELEGRAM_BOT_TOKEN" Default="" Mode="" Description="Telegram Bot Token" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="TELEGRAM_CHAT_ID" Target="TELEGRAM_CHAT_ID" Default="" Mode="" Description="Telegram Chat ID" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="DISCORD_WEBHOOK" Target="DISCORD_WEBHOOK" Default="" Mode="" Description="Discord Webhook" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="PRUEBA" Target="PRUEBA" Default="0|1" Mode="" Description="Ejecutar en modo prueba de rsync (1 = ejecución de prueba, 0 = ejecución normal)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="DEBUG" Target="DEBUG" Default="0|1" Mode="" Description="Salida del log: 0 = información básica, 1 = modo debug, 2 = modo superdetalle" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TZ" Target="TZ" Default="Europe/Madrid" Mode="" Description="Zona horaria" Type="Variable" Display="advanced" Required="true" Mask="false"/> 
+  <Config Name="ARRAY" Target="/mnt" Default="/mnt" Mode="rw" Description="Montaje para el acceso a los discos del array por completo." Type="Path" Display="advanced" Required="true" Mask="false"/>
+</Container>

@@ -1,0 +1,10 @@
+services:
+  mover-pro:
+    image: unraiders/mover-pro
+    container_name: mover-pro
+    env_file:
+      - .env
+    volumes:
+      - /path/to/from/mover-pro:/origen
+    network_mode: bridge
+    restart: unless-stopped
