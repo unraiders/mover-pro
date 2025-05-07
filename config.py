@@ -26,7 +26,7 @@ IMG_DISCORD_URL = 'https://github.com/unraiders/mover-pro/blob/main/imagenes/mov
 
 PRUEBA = os.getenv('PRUEBA', '0') == '1'
 
-DEBUG = os.getenv('DEBUG', '0') == '1'
+DEBUG = int(os.getenv('DEBUG', '0'))
 
 TZ = os.getenv('TZ', 'Europe/Madrid')
 

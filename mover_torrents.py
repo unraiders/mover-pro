@@ -2,60 +2,100 @@ import qbittorrentapi
 from datetime import datetime, UTC
 from config import (QBITTORRENT_HOST, QBITTORRENT_USER, QBITTORRENT_PASSWORD, DEBUG)
 from utils import setup_logger
+from notificaciones import send_notification
 
 logger = setup_logger(__name__)
 
 def pausar_torrents(client, dias):
-    torrents = client.torrents_info()
-    torrents_pausados = 0
+    # Obtener todos los torrents y ordenarlos por fecha de añadido
+    torrents = sorted(
+        client.torrents_info(),
+        key=lambda x: x['added_on']
+    )
     
-    if DEBUG:
-        logger.debug(f"Procesando {len(torrents)} torrents para pausar...")
-        
-    for torrent in torrents:
-        fecha_añadido = datetime.fromtimestamp(torrent['added_on'], UTC)
-        dias_transcurridos = (datetime.now(UTC) - fecha_añadido).days
-        
-        if DEBUG:
-            logger.debug(f"Torrent: {torrent['name']}")
-            logger.debug(f"  - Dias desde añadido: {dias_transcurridos}")
+    # Filtrar solo los torrents que cumplen con los días de antigüedad
+    torrents_a_procesar = [
+        torrent for torrent in torrents
+        if (datetime.now(UTC) - datetime.fromtimestamp(torrent['added_on'], UTC)).days == dias
+    ]
+    
+    if DEBUG in (1, 2):
+        logger.debug(f"Se encontraron {len(torrents_a_procesar)} torrents de {dias} días de antigüedad")
+    
+    torrents_pausados = 0
+    for torrent in torrents_a_procesar:
+        if DEBUG in (1, 2):
+            logger.debug(f"Procesando torrent: {torrent['name']}")
+            logger.debug(f"  - Edad: {(datetime.now(UTC) - datetime.fromtimestamp(torrent['added_on'], UTC)).days} días")
             logger.debug(f"  - Estado: {'Pausado' if torrent['state'] == 'pausedUP' else 'Activo'}")
-            
-        if dias_transcurridos == dias:
-            client.torrents_pause([torrent['hash']])
-            logger.info(f"Torrent {torrent['name']} pausado.")
-            torrents_pausados += 1
+        
+        client.torrents_pause([torrent['hash']])
+        logger.info(f"Torrent {torrent['name']} pausado.")
+        torrents_pausados += 1
     
     if torrents_pausados == 0:
         logger.info(f"No se encontraron torrents de {dias} días para pausar.")
+        mensaje = (
+            f"<b>MOVER-PRO</b>\n"
+            f"💤 No se encontraron torrents de {dias} días para pausar."
+        )
     else:
         logger.info(f"Total de torrents pausados: {torrents_pausados}")
+        mensaje = (
+            f"<b>MOVER-PRO</b>\n"
+            f"⏸️ Se pausaron {torrents_pausados} torrents de {dias} días de antigüedad."
+        )
+
+    send_notification(
+        message=mensaje,
+        title="MOVER-PRO - Resumen de torrents pausados",
+        parse_mode="HTML"
+    )
 
 def reanudar_torrents(client, dias):
-    torrents = client.torrents_info()
-    torrents_reanudados = 0
+    # Obtener todos los torrents y ordenarlos por fecha de añadido
+    torrents = sorted(
+        client.torrents_info(),
+        key=lambda x: x['added_on']
+    )
     
-    if DEBUG:
-        logger.debug(f"Procesando {len(torrents)} torrents para reanudar...")
-        
-    for torrent in torrents:
-        fecha_añadido = datetime.fromtimestamp(torrent['added_on'], UTC)
-        dias_transcurridos = (datetime.now(UTC) - fecha_añadido).days
-        
-        if DEBUG:
-            logger.debug(f"Torrent: {torrent['name']}")
-            logger.debug(f"  - Dias desde añadido: {dias_transcurridos}")
+    # Filtrar solo los torrents que cumplen con los días de antigüedad
+    torrents_a_procesar = [
+        torrent for torrent in torrents
+        if (datetime.now(UTC) - datetime.fromtimestamp(torrent['added_on'], UTC)).days == dias
+    ]
+    
+    if DEBUG in (1, 2):
+        logger.debug(f"Se encontraron {len(torrents_a_procesar)} torrents de {dias} días de antigüedad")
+    
+    torrents_reanudados = 0
+    for torrent in torrents_a_procesar:
+        if DEBUG in (1, 2):
+            logger.debug(f"Procesando torrent: {torrent['name']}")
             logger.debug(f"  - Estado: {'Pausado' if torrent['state'] == 'pausedUP' else 'Activo'}")
-            
-        if dias_transcurridos == dias:
-            client.torrents_resume([torrent['hash']])
-            logger.info(f"Torrent {torrent['name']} reanudado.")
-            torrents_reanudados += 1
+        
+        client.torrents_resume([torrent['hash']])
+        logger.info(f"Torrent {torrent['name']} reanudado.")
+        torrents_reanudados += 1
     
     if torrents_reanudados == 0:
         logger.info(f"No se encontraron torrents de {dias} días para reanudar.")
+        mensaje = (
+            f"<b>MOVER-PRO</b>\n"
+            f"💤 No se encontraron torrents de {dias} días para reanudar."
+        )
     else:
         logger.info(f"Total de torrents reanudados: {torrents_reanudados}")
+        mensaje = (
+            f"<b>MOVER-PRO</b>\n"
+            f"▶️ Se reanudaron {torrents_reanudados} torrents de {dias} días de antigüedad."
+        )
+
+    send_notification(
+        message=mensaje,
+        title="MOVER-PRO - Resumen de torrents reanudados",
+        parse_mode="HTML"
+    )
 
 def get_qbittorrent_client():
     client = qbittorrentapi.Client(host=QBITTORRENT_HOST)

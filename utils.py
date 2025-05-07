@@ -33,7 +33,10 @@ class ColoredFormatter(logging.Formatter):
 def setup_logger(name: str):
     logger = logging.getLogger(name)
 
-    logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
+    if DEBUG == 0:
+        logger.setLevel(logging.INFO)
+    else:  # DEBUG 1 o 2
+        logger.setLevel(logging.DEBUG)
 
     if not logger.hasHandlers():
         handler = logging.StreamHandler()

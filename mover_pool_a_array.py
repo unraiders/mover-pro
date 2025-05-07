@@ -13,7 +13,27 @@ from notificaciones import send_notification
 logger = setup_logger(__name__)
 
 # Configuración discos array Unraid
-DISCOS_ARRAY = sorted([d for d in Path('/mnt').glob('disk*/')])
+def ordenar_discos(disco):
+    """
+    Extrae el número del nombre del disco (ejemplo: '/mnt/disk1/' -> 1)
+    Solo procesa discos que sigan el patrón 'diskN' donde N es un número
+    """
+    try:
+        nombre_disco = disco.name  # Obtiene solo el nombre de la carpeta
+        if nombre_disco.startswith('disk'):
+            numero = ''.join(filter(str.isdigit, nombre_disco))
+            if numero:
+                return int(numero)
+    except (AttributeError, ValueError):
+        pass
+    return float('inf')  # Coloca al final cualquier disco con formato inválido
+
+# Filtrar solo los discos que siguen el patrón correcto
+DISCOS_ARRAY = sorted(
+    [d for d in Path('/mnt').glob('disk*/')
+     if d.name.startswith('disk') and any(c.isdigit() for c in d.name)],
+    key=ordenar_discos
+)
 ORIGEN_PATH = Path(ORIGEN)
 
 def espacio_disponible(path):
@@ -49,16 +69,19 @@ def es_archivo_antiguo(archivo):
     return dias_transcurridos >= DIAS_ANTIGUEDAD
 
 def mover_fichero_con_hardlinks(grupo, discos):
-    if DEBUG:
-        logger.debug("Archivos en el grupo de hardlinks:")
+    # Primero verificamos si el grupo cumple con la antigüedad
+    if not all(es_archivo_antiguo(f) for f in grupo):
+        if DEBUG == 2:  # Solo mostrar si DEBUG es 2
+            logger.debug("Archivos en el grupo de hardlinks (no cumplen antigüedad):")
+            for archivo in grupo:
+                logger.debug(f"  - {archivo}")
+            logger.info(f"Grupo de archivos no cumple con la antigüedad mínima de {DIAS_ANTIGUEDAD} días")
+        return False
+
+    if DEBUG in (1, 2):
+        logger.debug("Archivos en el grupo de hardlinks a procesar:")
         for archivo in grupo:
             logger.debug(f"  - {archivo}")
-
-    # Verificar si todos los archivos del grupo son antiguos
-
-    if not all(es_archivo_antiguo(f) for f in grupo):
-        logger.info(f"Grupo de archivos no cumple con la antigüedad mínima de {DIAS_ANTIGUEDAD} días")
-        return False
 
     tamano_total = sum(f.stat().st_size for f in grupo)
     for disco in discos:
@@ -92,12 +115,14 @@ def mover_fichero_con_hardlinks(grupo, discos):
 
 def mover_individuales(sin_hardlinks, discos):
     for file in sin_hardlinks:
-        if DEBUG:
-            logger.debug(f"Procesando archivo individual: {file}")
-
         if not es_archivo_antiguo(file):
-            logger.info(f"Archivo {file} no cumple con la antigüedad mínima de {DIAS_ANTIGUEDAD} días")
+            if DEBUG == 2:  # Solo mostrar si DEBUG es 2
+                logger.debug(f"Archivo no cumple antigüedad: {file}")
+                logger.info(f"Archivo {file} no cumple con la antigüedad mínima de {DIAS_ANTIGUEDAD} días")
             return False
+
+        if DEBUG in (1, 2):
+            logger.debug(f"Procesando archivo individual: {file}")
 
         tamano = file.stat().st_size
         for disco in discos:
@@ -209,7 +234,7 @@ def eliminar_directorios_vacios(path, intentos=5, espera=10):
                     exito = False
             
             if exito:
-                logger.info(f"🗑️ {len(directorios)} directorios vacíos eliminados correctamente")
+                logger.info(f"🗑️ Directorios: {len(directorios)} directorios vacíos eliminados correctamente")
                 return True
             else:
                 logger.warning(f"🟠 Intento {intento + 1}/{intentos}: Algunos directorios no pudieron ser eliminados")

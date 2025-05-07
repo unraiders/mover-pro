@@ -7,9 +7,10 @@ Utilidad para **Unraid** que mueve las carpetas y ficheros de un pool al array s
 
 - Gestión automática de torrents en qBittorrent (pausa/reanudación).
 - Movimiento de archivos respetando hardlinks existentes.
+- El proceso de movimiento tiene en cuenta la variable ESPACIO_MINIMO (GB) para comprobar en que discos del array hay espacio suficiente, desde disk1 -> diskX.
 - Configurable por antigüedad de archivos.
 - Notificaciones vía Telegram o Discord.
-- Modo prueba para verificar operaciones sin realizar cambios.
+- Modo PRUEBA para verificar operaciones sin realizar cambios.
 - Diferentes niveles de logging.
 
 
@@ -28,7 +29,7 @@ Utilidad para **Unraid** que mueve las carpetas y ficheros de un pool al array s
 | ESPACIO_MINIMO       |     ✅     | Espacio mínimo en los discos del array a la hora de realizar el rsync (expresado en GB).                                              |
 | DIAS_ANTIGUEDAD      |     ✅     | Número de días de antigüedad para ejecutar el proceso de movimiento.                                                                  |
 | CRON                 |     ✅     | Hora de ejecutar el script (formato crontab. ej., 0 7 * * * = 7:00 AM, visita https://crontab.guru/ para más info.).                  |
-| DEBUG                |     ✅     | Salida del log: 0 = información básica, 1 = modo debug.                                                                               |
+| DEBUG                |     ✅     | Salida del log: 0 = información básica, 1 = información detallada, 2 = información superdetallada.                                    |
 | PRUEBA               |     ✅     | Habilita el modo Prueba, no realiza ninguna modificación, es un modo simulación. (0 = No / 1 = Si).                                   |
 | TZ                   |     ✅     | Timezone (Por ejemplo: Europe/Madrid).                                                                                                |
 
