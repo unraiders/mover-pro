@@ -75,7 +75,15 @@ Movimiento hardlinks y ficheros individuales...
 
 ![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/borrado_directorios.png)
 
-Envio mensaje a Telegram y borrado de directorios vacíos en el pool de origen...
+Borrado de directorios vacíos en el pool de origen...
+
+![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/telegram.png)
+
+Envio mensaje a Telegram...
+
+![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/discord.png)
+
+Envio mensaje a Discord...
 
 Fin.
 
