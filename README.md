@@ -61,6 +61,10 @@ wget -O /boot/config/plugins/dockerMan/templates-user/my-mover-pro.xml https://r
 
 ### Preview 😎
 
+![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/inicio.png)
+
+Inicio...
+
 ![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/pausa_torrents.png)
 
 Inicio y pausa de torrents...
