@@ -15,15 +15,16 @@ fi
 
 validar_cron "$CRON"
 
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Arrancando MOVER-PRO entrypoint.sh" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Versión: $VERSION" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Carpeta destino Array: $DESTINO" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Espacio mínimo en discos de Array: $ESPACIO_MINIMO GB" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Notificación a: $CLIENTE_NOTIFICACION" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Programación CRON: $CRON" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Debug: $DEBUG" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Prueba: $PRUEBA" >&2
-echo "$(date +'%d-%m-%Y %H:%M:%S') - Zona horaria: $TZ" >&2
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Arrancando MOVER-PRO entrypoint.sh" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Versión: $VERSION" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Carpeta destino Array: $DESTINO" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Espacio mínimo en discos de Array: $ESPACIO_MINIMO GB" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Días de antigüedad: $DIAS_ANTIGUEDAD" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Notificación a: $CLIENTE_NOTIFICACION" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Programación CRON: $CRON" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Debug: $DEBUG" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Prueba: $PRUEBA" 
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Zona horaria: $TZ" 
 
 
 CRON_JOB="$CRON python3 /app/mover_pool_a_array.py >> /proc/1/fd/1 2>> /proc/1/fd/2"

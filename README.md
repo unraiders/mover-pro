@@ -58,3 +58,21 @@ Utilidad para **Unraid** que mueve las carpetas y ficheros de un pool al array s
 wget -O /boot/config/plugins/dockerMan/templates-user/my-mover-pro.xml https://raw.githubusercontent.com/unraiders/mover-pro/refs/heads/main/my-mover-pro.xml
 ```
 - Nos vamos a DOCKER y abajo a la izquierda tenemos el botón "AGREGAR CONTENEDOR" hacemos click y en seleccionar plantilla seleccionamos mover-pro y rellenamos las variables de entorno necesarias, tienes una explicación en cada variable en la propia plantilla.
+
+### Preview 😎
+
+![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/pausa_torrents.png)
+
+Inicio y pausa de torrents...
+
+![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/movimiento_hardlinks.png)
+
+Movimiento hardlinks y ficheros individuales...
+
+![alt text](https://github.com/unraiders/mover-pro/blob/main/imagenes/eliminación_directorios.png)
+
+Envio mensaje a Telegram y borrado de directorios vacíos en el poool de origen...
+
+Fin.
+
+
