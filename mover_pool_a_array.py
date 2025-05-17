@@ -5,12 +5,35 @@ from pathlib import Path
 from collections import defaultdict
 from datetime import datetime, timezone
 
-from config import (DIAS_ANTIGUEDAD, ESPACIO_MINIMO, ORIGEN, DESTINO, PRUEBA, DEBUG)
+from config import (DIAS_ANTIGUEDAD, ESPACIO_MINIMO, PORCENTAJE_MINIMO, ORIGEN, DESTINO, PRUEBA, DEBUG)
 from mover_torrents import gestionar_torrents
 from utils import setup_logger, generate_trace_id
 from notificaciones import send_notification
 
 logger = setup_logger(__name__)
+
+def verificar_porcentaje_uso(path):
+    """
+    Verifica si el porcentaje de uso del pool supera el mínimo establecido
+    Retorna: (porcentaje_actual, cumple_minimo)
+    """
+    try:
+        stat = os.statvfs(path)
+        total = stat.f_blocks * stat.f_frsize
+        disponible = stat.f_bavail * stat.f_frsize
+        usado = total - disponible
+        porcentaje_uso = (usado / total) * 100
+        
+        if DEBUG in (1, 2):
+            logger.debug(f"Espacio total en {path}: {total / (1024**3):.2f} GB")
+            logger.debug(f"Espacio usado en {path}: {usado / (1024**3):.2f} GB")
+            logger.debug(f"Porcentaje de uso actual: {porcentaje_uso:.2f}%")
+            logger.debug(f"Porcentaje mínimo requerido: {PORCENTAJE_MINIMO}%")
+        
+        return porcentaje_uso, porcentaje_uso >= PORCENTAJE_MINIMO
+    except Exception as e:
+        logger.error(f"Error al verificar el porcentaje de uso en {path}: {e}")
+        return 0, False
 
 # Configuración discos array Unraid
 def ordenar_discos(disco):
@@ -157,6 +180,29 @@ def mover_todo():
     generate_trace_id()
     
     logger.info(f"Iniciando el proceso de mover archivos desde {ORIGEN}")
+
+    if PORCENTAJE_MINIMO is not None:
+        porcentaje_actual, cumple_minimo = verificar_porcentaje_uso(ORIGEN_PATH)
+        
+        if not cumple_minimo:
+            mensaje = (
+                f"<b>MOVER-PRO</b>\n"
+                f"⚠️ Proceso cancelado:\n"
+                f"💾 Uso actual del pool: {porcentaje_actual:.2f}%\n"
+                f"📊 Mínimo requerido: {PORCENTAJE_MINIMO}%"
+            )
+            
+            send_notification(
+                message=mensaje,
+                title="MOVER-PRO - Proceso cancelado por espacio ocupado insuficiente.",
+                parse_mode="HTML"
+            )
+            
+            logger.info(f"Proceso cancelado: el uso del pool ({porcentaje_actual:.2f}%) no alcanza el mínimo requerido de ({PORCENTAJE_MINIMO}%)")
+            return
+    else:
+        if DEBUG in (1, 2):
+            logger.debug("PORCENTAJE_MINIMO no definido, continuando sin verificar el porcentaje de uso.")
     
     gestionar_torrents('pausar', DIAS_ANTIGUEDAD)
     
