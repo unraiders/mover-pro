@@ -1,6 +1,6 @@
 # mover-pro
 
-Utilidad para **Unraid** que mueve las carpetas y ficheros de un pool al array según los días de antigüedad pasados en la variable DIAS_ANTIGUEDAD y porcentaje de ocupación en el pool definido en la variable PORCENTAJE_MINIMO, respetando en el movimiento los hardlinks existentes y con la función de pausar/reanudar los torrents sedeados en qBittorrent y con notificación a Telegram o Discord.
+Utilidad para **UNRAID** que mueve las carpetas y ficheros de un pool al array según los días de antigüedad pasados en la variable **DIAS_ANTIGUEDAD** y porcentaje de ocupación en el pool definido en la variable **PORCENTAJE_MINIMO**, respetando en el movimiento los hardlinks existentes y con la función de pausar/reanudar los torrents sedeados en qBittorrent y con notificación de todo el proceso a Telegram o Discord.
 
 
 ## Características principales
@@ -43,16 +43,28 @@ Utilidad para **Unraid** que mueve las carpetas y ficheros de un pool al array s
 | ARRAY                |     ✅     | /mnt       | /mnt (se monta /mnt para tener acceso desde dentro del contenedor a todos los discos del array).                         |
 
 
-  > [!IMPORTANT]
-  > Se recomienda hacer uso de la variable PRUEBA = 1 antes de poner el Docker en producción, la ejecución de este Docker implica movimiento de ficheros así como acceso al pool y al array en Unraid y nos tenemos que asegurar que el proceso es correcto, con la variable PRUEBA a 1 NO realizará ningún movimiento de ficheros ni borrado de carpetas, pero tendremos en el log el detalle de los ficheros que movería y que .torrents pausará el cliente de torrents. 
-  > 
-  > Activando la variable DEBUG = 0 tenemos un log básico de las operaciones que realiza.
-  > 
-  > Activando la variable DEBUG = 1 tenemos un log detallado de los torrents que pausará/reanudará en qBittorrent y los ficheros que moverá del pool al array.
-  >
-  > Activando la variable DEBUG = 2 tenemos un log súper detallado de los torrents que pausará/reanudará en qBittorrent y los ficheros que moverá del pool al array.
-  >
-  > Una vez que compruebes que el funcionamiento sería el esperado después de la primera ejecución, comprueba que ha movido los ficheros correctamente y que ha respetado los hardlinks entre ambos ficheros.
+> [!IMPORTANT]
+> Se recomienda hacer uso de la variable PRUEBA = 1 antes de poner el Docker en producción, la ejecución de este Docker implica movimiento de ficheros así como acceso al pool y al array en Unraid y nos tenemos que asegurar que el proceso es correcto, con la variable PRUEBA a 1 NO realizará ningún movimiento de ficheros ni borrado de carpetas, pero tendremos en el log el detalle de los ficheros que movería y que .torrents pausará el cliente de torrents. 
+> 
+> Activando la variable DEBUG = 0 tenemos un log básico de las operaciones que realiza.
+> 
+> Activando la variable DEBUG = 1 tenemos un log detallado de los torrents que pausará/reanudará en qBittorrent y los ficheros que moverá del pool al array.
+>
+> Activando la variable DEBUG = 2 tenemos un log súper detallado de los torrents que pausará/reanudará en qBittorrent y los ficheros que moverá del pool al array.
+>
+> Una vez que compruebes que el funcionamiento sería el esperado después de la primera ejecución, comprueba que ha movido los ficheros correctamente y que ha respetado los hardlinks entre ambos ficheros.
+
+> [!IMPORTANT]
+> Este es el único proceso manual que tendremos que hacer, una vez añadido un nuevo disco al array hay que crear una carpeta en la raíz de ese disco con el nombre del share que tenemos definido en shares para que pase a formar parte ese disco del conjunto de discos que utilizamos en la variable DESTINO para ejecutar el movimiento. 
+
+> [!IMPORTANT]
+> El share del pool que tenemos definido debe estar configuradod e la siguiente manera: 
+
+> [!IMPORTANT]
+> El share en el pool que tenemos definido debe estar configurado de la siguiente manera:
+> 
+> * Almacenamiento primario = Tu disco o grupo de discos en el pool.
+> * Almacenamiento secundario = Ninguno (Ya que no hacemos uso del mover de Unraid).
 
 ### Instalación plantilla en Unraid.
 
