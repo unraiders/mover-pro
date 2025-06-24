@@ -58,9 +58,6 @@ Utilidad para **UNRAID** que mueve las carpetas y ficheros de un pool al array s
 > Este es el único proceso manual que tendremos que hacer, una vez añadido un nuevo disco al array hay que crear una carpeta en la raíz de ese disco con el nombre del share que tenemos definido en shares para que pase a formar parte ese disco del conjunto de discos que utilizamos en la variable DESTINO para ejecutar el movimiento. 
 
 > [!IMPORTANT]
-> El share del pool que tenemos definido debe estar configuradod e la siguiente manera: 
-
-> [!IMPORTANT]
 > El share en el pool que tenemos definido debe estar configurado de la siguiente manera:
 > 
 > * Almacenamiento primario = Tu disco o grupo de discos en el pool.
