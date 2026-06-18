@@ -27,6 +27,7 @@ Utilidad para **UNRAID** que mueve las carpetas y ficheros de un pool al array s
 | TELEGRAM_CHAT_ID     |     ❌     | ID del chat de Telegram.                                                                                                              |
 | DISCORD_WEBHOOK      |     ❌     | URL del webhook de Discord.                                                                                                           |
 | DESTINO              |     ✅     | Carpeta/Share destino dónde moverá los ficheros y carpetas (solo el nombre de la carpeta).                                            |
+| CARPETA_TORRENTS     |     ❌     | Subcarpeta (relativa a ORIGEN) donde residen los torrents; la búsqueda de torrents a pausar/reanudar se acota ahí de forma recursiva. Por defecto `torrents`. Vacío = buscar en todo ORIGEN. |
 | ESPACIO_MINIMO       |     ✅     | Espacio mínimo en los discos del array a la hora de realizar el rsync (expresado en GB).                                              |
 | PORCENTAJE_MINIMO    |     ❌     | % Mínimo de ocupación en el pool para ejecutar el proceso de movimiento con rsync (expresado en %).                                   |
 | DIAS_ANTIGUEDAD      |     ✅     | Número de días de antigüedad para ejecutar el proceso de movimiento.                                                                  |

@@ -10,6 +10,11 @@ QBITTORRENT_PASSWORD = os.getenv('QBITTORRENT_PASSWORD')
 
 ORIGEN = '/origen'
 
+# Subcarpeta (relativa a ORIGEN) donde residen los torrents. La búsqueda de
+# torrents a pausar/reanudar se acota a esta carpeta de forma recursiva.
+# Vacío = buscar en todo ORIGEN.
+CARPETA_TORRENTS = os.getenv('CARPETA_TORRENTS', 'torrents')
+
 DESTINO = os.getenv('DESTINO')
 
 DIAS_ANTIGUEDAD = int(os.getenv('DIAS_ANTIGUEDAD'))

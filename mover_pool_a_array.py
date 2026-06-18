@@ -204,46 +204,51 @@ def mover_todo():
         if DEBUG in (1, 2):
             logger.debug("PORCENTAJE_MINIMO no definido, continuando sin verificar el porcentaje de uso.")
     
-    gestionar_torrents('pausar', DIAS_ANTIGUEDAD)
-    
-    hardlink_grupos = encontrar_hardlinks(ORIGEN_PATH)
-    todos_los_archivos = set(p for p in ORIGEN_PATH.rglob("*") if p.is_file())
-    archivos_en_grupos = set(f for grupo in hardlink_grupos.values() for f in grupo)
-    sin_hardlinks = list(todos_los_archivos - archivos_en_grupos)
+    # Se pausan los torrents cuyo contenido está en el pool ANTES de mover,
+    # y se guardan sus hashes para reanudar exactamente esos al terminar.
+    torrents_pausados = gestionar_torrents('pausar')
 
-    logger.info(f"Se encontraron {len(todos_los_archivos)} archivos en total")
-    logger.info(f"- {len(archivos_en_grupos)} archivos en grupos de hardlinks")
-    logger.info(f"- {len(sin_hardlinks)} archivos individuales")
+    try:
+        hardlink_grupos = encontrar_hardlinks(ORIGEN_PATH)
+        todos_los_archivos = set(p for p in ORIGEN_PATH.rglob("*") if p.is_file())
+        archivos_en_grupos = set(f for grupo in hardlink_grupos.values() for f in grupo)
+        sin_hardlinks = list(todos_los_archivos - archivos_en_grupos)
 
-    hardlinks_movidos = 0
-    individuales_movidos = 0
+        logger.info(f"Se encontraron {len(todos_los_archivos)} archivos en total")
+        logger.info(f"- {len(archivos_en_grupos)} archivos en grupos de hardlinks")
+        logger.info(f"- {len(sin_hardlinks)} archivos individuales")
 
-    for grupo in hardlink_grupos.values():
-        if mover_fichero_con_hardlinks(grupo, DISCOS_ARRAY):
-            hardlinks_movidos += len(grupo)
+        hardlinks_movidos = 0
+        individuales_movidos = 0
 
-    for file in sin_hardlinks:
-        if mover_individuales([file], DISCOS_ARRAY):
-            individuales_movidos += 1
+        for grupo in hardlink_grupos.values():
+            if mover_fichero_con_hardlinks(grupo, DISCOS_ARRAY):
+                hardlinks_movidos += len(grupo)
 
-    total_movidos = hardlinks_movidos + individuales_movidos
+        for file in sin_hardlinks:
+            if mover_individuales([file], DISCOS_ARRAY):
+                individuales_movidos += 1
 
-    mensaje = (
-        f"<b>MOVER-PRO</b>\n"
-        f"🚀 Se movieron {total_movidos} archivos en total:\n"
-        f"🔗 - {hardlinks_movidos} archivos en grupos de hardlinks.\n"
-        f"⛓️‍💥 - {individuales_movidos} archivos individuales."
-    )
+        total_movidos = hardlinks_movidos + individuales_movidos
 
-    send_notification(
-        message=mensaje,
-        title="MOVER-PRO - Resumen de movimiento de archivos",
-        parse_mode="HTML"
-    )
+        mensaje = (
+            f"<b>MOVER-PRO</b>\n"
+            f"🚀 Se movieron {total_movidos} archivos en total:\n"
+            f"🔗 - {hardlinks_movidos} archivos en grupos de hardlinks.\n"
+            f"⛓️‍💥 - {individuales_movidos} archivos individuales."
+        )
 
-    logger.info(f"{'[SIMULACIÓN] ' if PRUEBA else ''}Total de archivos movidos: {total_movidos}")
+        send_notification(
+            message=mensaje,
+            title="MOVER-PRO - Resumen de movimiento de archivos",
+            parse_mode="HTML"
+        )
 
-    gestionar_torrents('reanudar', DIAS_ANTIGUEDAD)
+        logger.info(f"{'[SIMULACIÓN] ' if PRUEBA else ''}Total de archivos movidos: {total_movidos}")
+    finally:
+        # Reanudar siempre, aunque el movimiento falle a la mitad, para no dejar
+        # torrents pausados de forma permanente.
+        gestionar_torrents('reanudar', pausados=torrents_pausados)
 
 def eliminar_directorios_vacios(path, intentos=5, espera=10):
     """
