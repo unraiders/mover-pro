@@ -2,8 +2,12 @@ FROM python:3.13-alpine
 
 LABEL maintainer="unraiders"
 LABEL description="Ejecutar rsync con días de antigüedad, % de ocupación, teniendo en cuenta hardlinks y pausar/reanudar los torrents sedeados en qBittorrent con notificación a Telegram o Discord."
+# Vincula la imagen de GHCR con el repositorio (pestaña Packages del repo).
+LABEL org.opencontainers.image.source="https://github.com/unraiders/mover-pro"
 
-ARG VERSION=1.1.2
+# La versión real la inyecta el workflow vía --build-arg desde .version_main / .version_develop.
+# "local" es el valor por defecto para builds manuales sin --build-arg.
+ARG VERSION=local
 ENV VERSION=${VERSION}
 
 # Instalar cron y otros paquetes
